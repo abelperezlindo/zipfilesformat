@@ -1,0 +1,6 @@
+name: ZipFiles
+description: Provides an link for download all files of an field as zip file.
+package: Field types
+type: module
+configure: zipfiles.settings
+core_version_requirement: ^9.2 || ^10
