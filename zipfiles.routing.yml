@@ -5,3 +5,10 @@ zipfiles.settings:
     _title: 'Admin Toolbar settings'
   requirements:
     _permission: 'administer site configuration'
+
+zipfiles.download:
+  path: '/download/zip/{nid}'
+  defaults:
+    _controller: \Drupal\zipfiles\Controller\ZipfilesController::download
+  requirements:
+    _permission: 'access content'

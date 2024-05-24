@@ -5,6 +5,8 @@ namespace Drupal\zipfiles\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Plugin implementation of the 'file_default' formatter.
@@ -23,8 +25,16 @@ class ZipFilesFormatter extends GenericFileFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = parent::viewElements($items, $langcode);
-    return $elements;
+    if (!$this->getSetting('always_generate_link') && $items->count() == 1) {
+      return parent::viewElements($items, $langcode);
+    }
+
+    $node = $items->getEntity();
+    $params = ['field' => $items->getName(), 'nid' => $node->id()];
+    $url = Url::fromRoute('zipfiles.download', $params);
+    $link = Link::fromTextAndUrl($this->t('Descargar todos '), $url);
+
+    return $link->toRenderable();
   }
 
   /**
@@ -33,11 +43,11 @@ class ZipFilesFormatter extends GenericFileFormatter {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
-    $form['if_two_or_more_one'] = [
-      '#title' => $this->t('Generate link if have two or more files'),
-      '#description' => $this->t('Replace the file name by its description when available'),
+    $form['always_generate_link'] = [
+      '#title' => $this->t('Always generate ZIP link'),
+      '#description' => $this->t('If not active, the link is only generated if the field has more than one file'),
       '#type' => 'checkbox',
-      '#default_value' => $this->getSetting('if_two_or_more_one'),
+      '#default_value' => $this->getSetting('always_generate_link'),
     ];
 
     return $form;
@@ -48,7 +58,7 @@ class ZipFilesFormatter extends GenericFileFormatter {
    */
   public static function defaultSettings() {
     $settings = parent::defaultSettings();
-    $settings['if_two_or_more_one'] = FALSE;
+    $settings['always_generate_link'] = FALSE;
     return $settings;
   }
 
