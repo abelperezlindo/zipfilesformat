@@ -30,9 +30,9 @@ class ZipFilesFormatter extends GenericFileFormatter {
     }
 
     $node = $items->getEntity();
-    $params = ['field' => $items->getName(), 'nid' => $node->id()];
+    $params = ['field_name' => $items->getName(), 'nid' => $node->id()];
     $url = Url::fromRoute('zipfiles.download', $params);
-    $link = Link::fromTextAndUrl($this->t('Descargar todos '), $url);
+    $link = Link::fromTextAndUrl($this->t('Download all'), $url);
 
     return $link->toRenderable();
   }

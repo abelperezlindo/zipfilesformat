@@ -7,7 +7,7 @@ zipfiles.settings:
     _permission: 'administer site configuration'
 
 zipfiles.download:
-  path: '/download/zip/{nid}'
+  path: '/download/zip/{nid}/{field_name}'
   defaults:
     _controller: \Drupal\zipfiles\Controller\ZipfilesController::download
   requirements:

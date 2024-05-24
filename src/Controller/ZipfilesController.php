@@ -16,13 +16,16 @@ class ZipfilesController extends ControllerBase {
   /**
    * Search node file fields and download it zipped.
    */
-  public function download(Request $request, $nid) {
+  public function download(Request $request, $nid, $field_name) {
     $return = $request->query->get('return') ?? '/';
     $response = new Response();
-    $schema = 'public://';
+    $schema = 'temporary://';
     $filebasepath = \Drupal::service('file_system')->realpath($schema);
     $filename = 'Archivos' . \Drupal::time()->getRequestTime() . '.zip';
     $realpath = $filebasepath . '/' . $filename;
+    // $imagen = file_get_contents('productos://tv.jpg');
+    // $ruta = file_unmanaged_save_data($image, 'public://tv.jpg', FILE_EXISTS_REPLACE);
+
     // Check if ZipArchive class exists.
     if (!class_exists('ZipArchive')) {
       \Drupal::logger('negociaciones_zipfiles')->warning('Could not compress file, PHP is compiled without zip support.');
@@ -35,29 +38,26 @@ class ZipfilesController extends ControllerBase {
       \Drupal::messenger()->addMessage("The node does not exist", 'warning');
       return new RedirectResponse($return);
     }
-
-    $file_fields = $this->nodeHasFileFields($node);
+    if (!$node->hasField($field_name)) {
+      return new RedirectResponse($return);
+    }
+    elseif ($node->{$field_name}->isEmpty()) {
+      return new RedirectResponse($return);
+    }
 
     $zip = new \ZipArchive;
     if ($zip->open($realpath, \ZipArchive::CREATE) === TRUE) {
-      foreach ($file_fields as $field_name) {
-        /** @var Drupal\file\Plugin\Field\FieldType\FileFieldItemList $field_items */
-        $field_items = $node->{$field_name};
-        if (!$field_items->isEmpty()) {
-          /** @var Drupal\file\Entity\File $file */
-          foreach ($field_items->referencedEntities() as $file) {
-            $file_reaLpath = str_replace($schema, $filebasepath . '/', $file->getFileUri());
-            if (file_exists($file_reaLpath)) {
-              $zip->addFile($file_reaLpath, $file->getFilename());
-            }
-            else {
-              \Drupal::messenger()->addMessage("The file {$file->getFilename()} does not exist", 'warning');
-            }
-          }
+      foreach ($node->{$field_name}->referencedEntities() as $file) {
+        $file_reaLpath = str_replace($schema, $filebasepath . '/', $file->getFileUri());
+        if (file_exists($file_reaLpath)) {
+          $zip->addFile($file_reaLpath, $file->getFilename());
+        }
+        else {
+          \Drupal::messenger()->addMessage("The file {$file->getFilename()} does not exist", 'warning');
         }
       }
-      $zip->close();
     }
+    $zip->close();
 
     if (file_exists($realpath)) {
       $response->headers->set('Expires', '0');
@@ -69,24 +69,6 @@ class ZipfilesController extends ControllerBase {
       return $response;
     }
     return new RedirectResponse($return);
-  }
-
-  /**
-   * Search the file type fields in node.
-   */
-  public function nodeHasFileFields($node): Array {
-    $file_fields = [];
-    $fields_of_node = $node->getFields($include_computed = FALSE);
-
-    foreach ($fields_of_node as $name => $data) {
-      /** @var Drupal\Core\Field\FieldItemList $data */
-      $type = $data->getFieldDefinition()->getType();
-
-      if ($type === 'file') {
-        $file_fields[] = $name;
-      }
-    }
-    return $file_fields;
   }
 
 }
