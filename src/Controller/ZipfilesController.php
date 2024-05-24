@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Component\Utility\Html;
 
 /**
  * Controller class for download all in zip.
@@ -19,8 +20,7 @@ class ZipfilesController extends ControllerBase {
    */
   public function download(Request $request, $nid, $field_name) {
     $return = $request->query->get('return') ?? '/';
-
-    $filename = 'Archivos' . \Drupal::time()->getRequestTime() . '.zip';
+    $config = \Drupal::configFactory()->getEditable('zipfiles.settings');
 
     // Check if ZipArchive class exists.
     if (!class_exists('ZipArchive')) {
@@ -40,6 +40,21 @@ class ZipfilesController extends ControllerBase {
     elseif ($node->{$field_name}->isEmpty()) {
       return new RedirectResponse($return);
     }
+
+    $filename = '';
+    if (!empty($config->get('filename'))) {
+      $token_service = \Drupal::token();
+      $token_data = ['node' => $node];
+      $token_options = ['clear' => TRUE];
+      $text = HTML::escape($config->get('filename'));
+      $filename = $token_service->replace($text, $token_data, $token_options);
+    }
+    if (empty($filename)) {
+      $filename = \Drupal::time()->getRequestTime();
+    }
+
+    $filename .= '.zip';
+
     // Prepare destination directory.
     $directory = 'public://zipfiles/' . $node->id();
     $file_system = \Drupal::service('file_system');

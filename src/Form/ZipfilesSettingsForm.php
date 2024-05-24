@@ -36,7 +36,22 @@ class ZipfilesSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('admin_toolbar.settings');
+    $config = $this->config('zipfiles.settings');
+    $filename = $config->get('filename');
+    $form['filename'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Filename'),
+      '#description' => $this->t('Enter the name to use in the generated file, you can use tokens if available.'),
+      '#default_value' => $filename,
+    ];
+    if (\Drupal::service('module_handler')->moduleExists('token')) {
+      // your code here
+      $form['token_help'] = [
+        '#theme' => 'token_tree_link',
+        '#token_types' => ['user', 'date', 'node'],
+      ];
+    }
+
 
     return parent::buildForm($form, $form_state);
   }
@@ -45,12 +60,11 @@ class ZipfilesSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-   /* 
-   $this->config('admin_toolbar.settings')
-      ->set('menu_depth', $form_state->getValue('menu_depth'))
+
+   $this->config('zipfiles.settings')
+      ->set('filename', $form_state->getValue('filename'))
       ->save();
     parent::submitForm($form, $form_state);
-    */
   }
 
 }
