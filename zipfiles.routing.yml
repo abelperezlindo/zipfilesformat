@@ -2,7 +2,7 @@ zipfiles.settings:
   path: '/admin/config/zipfiles'
   defaults:
     _form: '\Drupal\zipfiles\Form\ZipfilesSettingsForm'
-    _title: 'Admin Toolbar settings'
+    _title: 'Zip file fields settings'
   requirements:
     _permission: 'administer site configuration'
 
