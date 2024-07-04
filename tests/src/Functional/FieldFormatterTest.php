@@ -94,7 +94,13 @@ class FieldFormatterTest extends BrowserTestBase {
     ]);
 
     $this->drupalLogin($this->webUser);
+    $this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
 
+    //$this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
+
+    /** @var \Drupal\Tests\WebAssert $assert */
+    //$assert = $this->assertSession();
+    //$assert->buttonExists('Create a new field');
   }
 
   /**
