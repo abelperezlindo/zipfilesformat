@@ -124,16 +124,16 @@ class FieldFormatterTest extends BrowserTestBase {
     $entityTypeManager = $this->container->get('entity_type.manager');
     // Create an field zipfiles type.
     FieldStorageConfig::create([
-      'field_name' => 'field_zipear',
+      'field_name' => 'field_files_to_zipear',
       'entity_type' => 'node',
-      'type' => 'color_field_type',
+      'type' => 'file',
     ])->save();
 
     // Add this field in test content type.
     FieldConfig::create([
-      'field_name' => 'field_color',
-      'label' => 'Freeform Color',
-      'description' => 'Color field description',
+      'field_name' => 'field_files_to_zipear',
+      'label' => 'Zipear',
+      'description' => 'files 2 zipear',
       'entity_type' => 'node',
       'bundle' => 'article',
     ])->save();
@@ -143,7 +143,18 @@ class FieldFormatterTest extends BrowserTestBase {
     $this->display = $entityTypeManager->getStorage('entity_view_display')
       ->load('node.article.default');
 
-    $this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
+    $this->form->setComponent('field_files_to_zipear', [
+      'type' => 'file',
+    ])->save();
+
+    $this->display->setComponent('field_files_to_zipear', [
+      'type' => 'file',
+      'weight' => 10,
+      'label' => 'hidden',
+    ])->save();
+    // Display creation form.
+    $this->drupalGet('node/add/article');
+    $session = $this->assertSession();
 
     //$this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
 
