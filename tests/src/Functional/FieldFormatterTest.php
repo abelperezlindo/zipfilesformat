@@ -3,6 +3,10 @@
 namespace Drupal\Tests\zipfiles\Functional;
 
 use Drupal\Tests\BrowserTestBase;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * Skeleton functional test.
@@ -79,10 +83,33 @@ class FieldFormatterTest extends BrowserTestBase {
    * The setUp() method is run before every other test method, so commonalities
    * should go here.
    */
+
+
+  /**
+   * The Entity View Display for the article node type.
+   *
+   * @var \Drupal\Core\Entity\Entity\EntityViewDisplay
+   */
+  protected EntityViewDisplay $display;
+
+  /**
+   * The Entity Form Display for the article node type.
+   *
+   * @var \Drupal\Core\Entity\Entity\EntityFormDisplay
+   */
+  protected EntityFormDisplay $form;
+
+  /**
+   * Set up.
+   *
+   * @todo place this in base test class.c
+   * see https://git.drupalcode.org/project/color_field/-/tree/3.0.x/tests/src/Functional?ref_type=heads
+   * see https://git.drupalcode.org/project/svg_image_field/-/tree/2.3.x/tests/src/Functional?ref_type=heads
+   */
   protected function setUp(): void {
     parent::setUp();
 
-    $this->createContentType(['type' => 'test_content_type']);
+    $this->drupalCreateContentType(['type' => 'test_content_type']);
     // Create users.
     $this->webUser = $this->drupalCreateUser([
       'access administration pages',
@@ -94,6 +121,28 @@ class FieldFormatterTest extends BrowserTestBase {
     ]);
 
     $this->drupalLogin($this->webUser);
+    $entityTypeManager = $this->container->get('entity_type.manager');
+    // Create an field zipfiles type.
+    FieldStorageConfig::create([
+      'field_name' => 'field_zipear',
+      'entity_type' => 'node',
+      'type' => 'color_field_type',
+    ])->save();
+
+    // Add this field in test content type.
+    FieldConfig::create([
+      'field_name' => 'field_color',
+      'label' => 'Freeform Color',
+      'description' => 'Color field description',
+      'entity_type' => 'node',
+      'bundle' => 'article',
+    ])->save();
+
+    $this->form = $entityTypeManager->getStorage('entity_form_display')
+      ->load('node.article.default');
+    $this->display = $entityTypeManager->getStorage('entity_view_display')
+      ->load('node.article.default');
+
     $this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
 
     //$this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
