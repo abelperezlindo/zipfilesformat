@@ -136,6 +136,7 @@ class FieldFormatterTest extends BrowserTestBase {
       'field_name' => 'field_files_to_zipear',
       'entity_type' => 'node',
       'type' => 'file',
+      'cardinality' => -1,
       'settings' => [
         'uri_scheme' => 'public',
       ],
@@ -175,12 +176,15 @@ class FieldFormatterTest extends BrowserTestBase {
 
     // Display creation form.
     $this->drupalGet('node/add/article');
-    $this->assertSession()->responseContains('name="field_files_to_zipear[0][fids]"');
+    $this->assertSession()->responseContains('field_files_to_zipear[0][fids]');
 
     $values = [
       'title[0][value]' => $this->randomMachineName(10),
       'body[0][value]' => $this->randomString(128),
     ];
+    foreach ($this->getUrisOfTestFiles() as $index => $file_uri) {
+      $values['field_files_to_zipear[' . $index . ']'] = $file_uri;
+    }
 
     $this->submitForm($values, 'Save');
 
@@ -206,4 +210,22 @@ class FieldFormatterTest extends BrowserTestBase {
     $this->assertTrue(TRUE);
   }
 
+  protected function resourcesUrl(): string {
+    return \Drupal::request()->getSchemeAndHttpHost() . '/' . $this->getModulePath('zipfiles') . '/tests/resources';
+  }
+
+  protected function resourcesPath(): string {
+    $absolute = realpath(getcwd());
+    return $absolute . '/' . $this->getModulePath('zipfiles') . '/tests/resources';
+  }
+
+  protected function getUrisOfTestFiles() {
+    $resources_path  =$this->resourcesPath() . '/';
+    return [
+      $resources_path . 'text_file.txt',
+      $resources_path . 'pdf_file.pdf',
+      $resources_path . 'png_file.png',
+      $resources_path . 'jpeg_file.jpeg',
+    ];
+  }
 }
