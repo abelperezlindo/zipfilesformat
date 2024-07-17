@@ -1,0 +1,16 @@
+field.formatter.settings.file_zipfiles_default:
+  type: mapping
+  label: 'file_zipfiles_default config'
+  mapping:
+    use_description_as_link_text:
+      type: boolean
+      label: "Use description as link text"
+    only_show_zip_link:
+      type: boolean
+      label: "Only show the link to the compressed file"
+    no_link_when_only_one_file:
+      type: boolean
+      label: "Don't show when there is only one file"
+    link_text_label:
+      type: string
+      label: "Don't show when there is only one file"
