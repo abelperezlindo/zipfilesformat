@@ -68,7 +68,15 @@ class FieldFormatterTest extends BrowserTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['node', 'user', 'field', 'file_test', 'image'];
+  protected static $modules = [
+    'node',
+    'zipfiles',
+    'user',
+    'field',
+    'field_ui',
+    'file_test',
+    'image',
+  ];
 
   /**
    * Fixture user with administrative powers.
@@ -105,11 +113,12 @@ class FieldFormatterTest extends BrowserTestBase {
    * @todo place this in base test class.c
    * see https://git.drupalcode.org/project/color_field/-/tree/3.0.x/tests/src/Functional?ref_type=heads
    * see https://git.drupalcode.org/project/svg_image_field/-/tree/2.3.x/tests/src/Functional?ref_type=heads
+   * see https://git.drupalcode.org/project/file_download_link/-/blob/2.0.x/tests/src/Functional/FileDownloadLinkFormTest.php?ref_type=heads
    */
   protected function setUp(): void {
     parent::setUp();
 
-    $this->drupalCreateContentType(['type' => 'test_content_type']);
+    $this->drupalCreateContentType(['type' => 'article']);
     // Create users.
     $this->webUser = $this->drupalCreateUser([
       'access administration pages',
@@ -117,7 +126,7 @@ class FieldFormatterTest extends BrowserTestBase {
       'administer permissions',
       'administer nodes',
       'administer content types',
-      'create test_content_type content',
+      'create article content',
     ]);
 
     $this->drupalLogin($this->webUser);
@@ -127,6 +136,9 @@ class FieldFormatterTest extends BrowserTestBase {
       'field_name' => 'field_files_to_zipear',
       'entity_type' => 'node',
       'type' => 'file',
+      'settings' => [
+        'uri_scheme' => 'public',
+      ],
     ])->save();
 
     // Add this field in test content type.
@@ -136,6 +148,11 @@ class FieldFormatterTest extends BrowserTestBase {
       'description' => 'files 2 zipear',
       'entity_type' => 'node',
       'bundle' => 'article',
+      'settings' => [
+        'file_directory' => 'zipe',
+        'file_extensions' => 'txt, png, jpeg, pdf',
+        'max_filesize' => '',
+      ],
     ])->save();
 
     $this->form = $entityTypeManager->getStorage('entity_form_display')
@@ -144,23 +161,33 @@ class FieldFormatterTest extends BrowserTestBase {
       ->load('node.article.default');
 
     $this->form->setComponent('field_files_to_zipear', [
-      'type' => 'file',
+      'type' => 'file_generic',
+      'settings' => [
+        'throbber' => TRUE,
+      ],
     ])->save();
 
     $this->display->setComponent('field_files_to_zipear', [
-      'type' => 'file',
+      'type' => 'file_zipfiles_default',
       'weight' => 10,
       'label' => 'hidden',
     ])->save();
+
     // Display creation form.
     $this->drupalGet('node/add/article');
+    $this->assertSession()->responseContains('name="field_files_to_zipear[0][fids]"');
+
+    $values = [
+      'title[0][value]' => $this->randomMachineName(10),
+      'body[0][value]' => $this->randomString(128),
+    ];
+
+    $this->submitForm($values, 'Save');
+
     $session = $this->assertSession();
-
-    //$this->drupalGet('/admin/structure/types/manage/test_content_type/fields');
-
-    /** @var \Drupal\Tests\WebAssert $assert */
-    //$assert = $this->assertSession();
-    //$assert->buttonExists('Create a new field');
+    $this->drupalGet('/node/1');
+    $this->assertSession()->responseContains('Download all');
+    $this->drupalGet('/admin/structure/types/manage/article/fields');
   }
 
   /**
