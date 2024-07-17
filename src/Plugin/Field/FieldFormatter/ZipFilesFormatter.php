@@ -13,6 +13,7 @@ use Drupal\Core\Link;
  *
  * @FieldFormatter(
  *   id = "file_zipfiles_default",
+ *   module = "zipfiles",
  *   label = @Translation("Generic ZIP file"),
  *   field_types = {
  *     "file"
@@ -65,7 +66,7 @@ class ZipFilesFormatter extends GenericFileFormatter {
       '#default_value' => $this->getSetting('no_link_when_only_one'),
     ];
     $form['zip settigs']['link_text_label'] = [
-      '#title' => $this->t('don\'t show when there is only one file'),
+      '#title' => $this->t('Don\'t show when there is only one file'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('link_text_label'),
     ];
