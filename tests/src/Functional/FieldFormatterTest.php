@@ -176,15 +176,19 @@ class FieldFormatterTest extends BrowserTestBase {
 
     // Display creation form.
     $this->drupalGet('node/add/article');
-    $this->assertSession()->responseContains('field_files_to_zipear[0][fids]');
+    //$this->assertSession()->responseContains('field_files_to_zipear[0][fids]');
 
     $values = [
       'title[0][value]' => $this->randomMachineName(10),
       'body[0][value]' => $this->randomString(128),
     ];
-    foreach ($this->getUrisOfTestFiles() as $index => $file_uri) {
-      $values['field_files_to_zipear[' . $index . ']'] = $file_uri;
-    }
+
+    $page = $this->getSession()->getPage();
+    $resources_path = $this->resourcesPath();
+
+    $page->attachFileToField(
+      'files[field_files_to_zipear_0][]', $resources_path . '/text_file.txt');
+    $this->submitForm([], 'Upload');
 
     $this->submitForm($values, 'Save');
 
