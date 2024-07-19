@@ -7,6 +7,8 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Tests\file\Functional\FileFieldTestBase;
+use Drupal\Tests\TestFileCreationTrait;
 
 /**
  * Skeleton functional test.
@@ -42,7 +44,7 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
  *
  * @ingroup testing_example
  */
-class FieldFormatterTest extends BrowserTestBase {
+class FieldFormatterTest extends FileFieldTestBase {
 
   /**
    * The theme to install as the default for testing.
@@ -118,7 +120,7 @@ class FieldFormatterTest extends BrowserTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->drupalCreateContentType(['type' => 'article']);
+    //$this->drupalCreateContentType(['type' => 'article']);
     // Create users.
     $this->webUser = $this->drupalCreateUser([
       'access administration pages',
@@ -129,7 +131,7 @@ class FieldFormatterTest extends BrowserTestBase {
       'create article content',
     ]);
 
-    $this->drupalLogin($this->webUser);
+    //$this->drupalLogin($this->webUser);
     $entityTypeManager = $this->container->get('entity_type.manager');
     // Create an field zipfiles type.
     FieldStorageConfig::create([
@@ -149,11 +151,7 @@ class FieldFormatterTest extends BrowserTestBase {
       'description' => 'files 2 zipear',
       'entity_type' => 'node',
       'bundle' => 'article',
-      'settings' => [
-        'file_directory' => 'zipe',
-        'file_extensions' => 'txt, png, jpeg, pdf',
-        'max_filesize' => '',
-      ],
+
     ])->save();
 
     $this->form = $entityTypeManager->getStorage('entity_form_display')
@@ -176,21 +174,25 @@ class FieldFormatterTest extends BrowserTestBase {
 
     // Display creation form.
     $this->drupalGet('node/add/article');
-    //$this->assertSession()->responseContains('field_files_to_zipear[0][fids]');
+    $this->assertSession()->responseContains('field_files_to_zipear');
 
-    $values = [
-      'title[0][value]' => $this->randomMachineName(10),
-      'body[0][value]' => $this->randomString(128),
+    $file_system = \Drupal::service('file_system');
+
+    // Create a multivalue File field with 'node/[node:nid]' as the File path
+    // and '[file:fid].txt' as the File name.
+    $field_name = 'field_files_to_zipear';
+
+    // Create a node with three (3) test files.
+    $text_files = $this->drupalGetTestFiles('text');
+    $this->drupalGet("node/add/article");
+    $this->submitForm(["files[{$field_name}_0][]" => $file_system->realpath($text_files[0]->uri)], 'Upload');
+    $this->submitForm(["files[{$field_name}_1][]" => $file_system->realpath($text_files[1]->uri)], 'Upload');
+    $edit = [
+      'title[0][value]' => $this->randomMachineName(),
+      "files[{$field_name}_2][]" => $file_system->realpath($text_files[1]->uri),
     ];
+    $this->submitForm($edit, 'Save');
 
-    $page = $this->getSession()->getPage();
-    $resources_path = $this->resourcesPath();
-
-    $page->attachFileToField(
-      'files[field_files_to_zipear_0][]', $resources_path . '/text_file.txt');
-    $this->submitForm([], 'Upload');
-
-    $this->submitForm($values, 'Save');
 
     $session = $this->assertSession();
     $this->drupalGet('/node/1');
