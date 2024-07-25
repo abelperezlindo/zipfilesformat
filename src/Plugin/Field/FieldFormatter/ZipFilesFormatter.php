@@ -51,21 +51,17 @@ class ZipFilesFormatter extends GenericFileFormatter {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
-    $form['zip settigs'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('ZIP FIle settings'),
-    ];
-    $form['zip settigs']['only_show_zip_link'] = [
+    $form['only_show_zip_link'] = [
       '#title' => $this->t('Only show the link to the compressed file'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('only_show_zip_link'),
     ];
-    $form['zip settigs']['no_link_when_only_one'] = [
+    $form['no_link_when_only_one'] = [
       '#title' => $this->t('Don\'t show when there is only one file'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('no_link_when_only_one'),
     ];
-    $form['zip settigs']['link_text_label'] = [
+    $form['link_text_label'] = [
       '#title' => $this->t('Don\'t show when there is only one file'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('link_text_label'),
@@ -78,12 +74,11 @@ class ZipFilesFormatter extends GenericFileFormatter {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    $settings = parent::defaultSettings();
-    $settings['only_show_zip_link'] = FALSE;
-    $settings['no_link_when_only_one_file'] = TRUE;
-    $settings['link_text_label'] = 'Download all';
-
-    return $settings;
+    return [
+      'only_show_zip_link' => FALSE,
+      'no_link_when_only_one_file' => TRUE,
+      'link_text_label' => 'Download all',
+    ] + parent::defaultSettings();
   }
 
 }
