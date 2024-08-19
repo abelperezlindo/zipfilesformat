@@ -10,9 +10,9 @@ use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class AdminToolbarSettingsForm. The config form for the admin_toolbar module.
+ * The config form for the zipfiles module.
  *
- * @package Drupal\admin_toolbar\Form
+ * @package Drupal\zipfiles\Form
  */
 class ZipfilesSettingsForm extends ConfigFormBase {
 
