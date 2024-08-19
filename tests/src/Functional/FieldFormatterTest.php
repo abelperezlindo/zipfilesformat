@@ -2,13 +2,11 @@
 
 namespace Drupal\Tests\zipfiles\Functional;
 
-use Drupal\Tests\BrowserTestBase;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Tests\file\Functional\FileFieldTestBase;
-use Drupal\Tests\TestFileCreationTrait;
 
 /**
  * Skeleton functional test.
