@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\zipfiles\Functional;
+namespace Drupal\Tests\zip_field_files\Functional;
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -41,7 +41,7 @@ class FieldFormatterTest extends FileFieldTestBase {
    */
   protected static $modules = [
     'node',
-    'zipfiles',
+    'zip_field_files',
     'user',
     'field',
     'field_ui',
@@ -84,7 +84,7 @@ class FieldFormatterTest extends FileFieldTestBase {
   protected function setUp(): void {
     parent::setUp();
     $entityTypeManager = $this->container->get('entity_type.manager');
-    // Create an field zipfiles type.
+    // Create an field zip_field_files type.
     FieldStorageConfig::create([
       'field_name' => self::FIELD_NAME,
       'entity_type' => 'node',
@@ -117,7 +117,7 @@ class FieldFormatterTest extends FileFieldTestBase {
     ])->save();
 
     $this->display->setComponent(self::FIELD_NAME, [
-      'type' => 'file_zipfiles_default',
+      'type' => 'file_zip_field_files_default',
       'weight' => 10,
       'label' => 'hidden',
     ])->save();

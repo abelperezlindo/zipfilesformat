@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\zipfiles\Plugin\Field\FieldFormatter;
+namespace Drupal\zip_field_files\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
@@ -12,9 +12,9 @@ use Drupal\Core\Link;
  * Plugin implementation of the 'file_default' formatter.
  *
  * @FieldFormatter(
- *   id = "file_zipfiles_default",
- *   module = "zipfiles",
- *   label = @Translation("Generic ZIP file"),
+ *   id = "file_zip_field_files_default",
+ *   module = "zip_field_files",
+ *   label = @Translation("ZIP file"),
  *   field_types = {
  *     "file"
  *   }
@@ -38,7 +38,7 @@ class ZipFilesFormatter extends GenericFileFormatter {
     $label = $this->getSetting('link_text_label');
     $node = $items->getEntity();
     $params = ['field_name' => $items->getName(), 'nid' => $node->id()];
-    $url = Url::fromRoute('zipfiles.download', $params);
+    $url = Url::fromRoute('zip_field_files.download', $params);
     $link = Link::fromTextAndUrl($label, $url);
     $elements[] = $link->toRenderable();
 

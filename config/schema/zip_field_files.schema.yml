@@ -1,6 +1,6 @@
-field.formatter.settings.file_zipfiles_default:
+field.formatter.settings.file_zip_field_files_default:
   type: mapping
-  label: 'file_zipfiles_default config'
+  label: 'file_zip_field_files_default config'
   mapping:
     use_description_as_link_text:
       type: boolean

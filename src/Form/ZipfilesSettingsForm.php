@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\zipfiles\Form;
+namespace Drupal\zip_field_files\Form;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -10,9 +10,9 @@ use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * The config form for the zipfiles module.
+ * The config form for the zip_field_files module.
  *
- * @package Drupal\zipfiles\Form
+ * @package Drupal\zip_field_files\Form
  */
 class ZipfilesSettingsForm extends ConfigFormBase {
 
@@ -21,7 +21,7 @@ class ZipfilesSettingsForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return [
-      'zipfiles.settings',
+      'zip_field_files.settings',
     ];
   }
 
@@ -29,14 +29,14 @@ class ZipfilesSettingsForm extends ConfigFormBase {
    * {@inheritDoc}
    */
   public function getFormId() {
-    return 'zipfiles_settings';
+    return 'zip_field_files_settings';
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('zipfiles.settings');
+    $config = $this->config('zip_field_files.settings');
     $filename = $config->get('filename');
     $save = $config->get('save') ?? 0;
     $save_uri = $config->get('save_uri');
@@ -62,7 +62,7 @@ class ZipfilesSettingsForm extends ConfigFormBase {
     $form['save_uri'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Save in'),
-      '#description' => $this->t('Enter the uri where the file will be saved. For example "public://zipfiles" or "private://zipfiles". Save in public is not recomended.'),
+      '#description' => $this->t('Enter the uri where the file will be saved. For example "public://zip_field_files" or "private://zip_field_files". Save in public is not recomended.'),
       '#default_value' => $save_uri,
       '#states' => [
         'visible' => [
@@ -94,7 +94,7 @@ class ZipfilesSettingsForm extends ConfigFormBase {
       $save_uri = $form_state->getValue('save_uri');
     }
 
-    $this->config('zipfiles.settings')
+    $this->config('zip_field_files.settings')
       ->set('filename', $form_state->getValue('filename'))
       ->set('save', $form_state->getValue('save'))
       ->set('save_uri', $save_uri)

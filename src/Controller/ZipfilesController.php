@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\zipfiles\Controller;
+namespace Drupal\zip_field_files\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
@@ -23,7 +23,7 @@ class ZipfilesController extends ControllerBase {
 
     // Check if ZipArchive class exists.
     if (!class_exists('ZipArchive')) {
-      \Drupal::logger('negociaciones_zipfiles')->warning('Could not compress file, PHP is compiled without zip support.');
+      \Drupal::logger('zip_field_files')->warning('Could not compress file, PHP is compiled without zip support.');
       \Drupal::messenger()->addMessage("The site does not have support for compressing files in ZIP format", 'warning');
       return new RedirectResponse($return);
     }
@@ -42,7 +42,7 @@ class ZipfilesController extends ControllerBase {
 
     $filename = $this->getFileName($node);
     $complete_filename = $this->getPreparedDestination($node, $filename);
-    $config = \Drupal::configFactory()->getEditable('zipfiles.settings');
+    $config = \Drupal::configFactory()->getEditable('zip_field_files.settings');
     $operation = \ZipArchive::OVERWRITE;
     if ($config->get('save')) {
       $operation = \ZipArchive::CREATE;
@@ -78,7 +78,7 @@ class ZipfilesController extends ControllerBase {
    * Get the name to use in the file.
    */
   protected function getFileName(Node $node) {
-    $config = \Drupal::configFactory()->getEditable('zipfiles.settings');
+    $config = \Drupal::configFactory()->getEditable('zip_field_files.settings');
     $filename = '';
     if (!empty($config->get('filename'))) {
       $token_service = \Drupal::token();
@@ -102,7 +102,7 @@ class ZipfilesController extends ControllerBase {
   protected function getPreparedDestination(Node $node, String $filename) {
     // Prepare destination directory.
     $file_system = \Drupal::service('file_system');
-    $config = \Drupal::configFactory()->getEditable('zipfiles.settings');
+    $config = \Drupal::configFactory()->getEditable('zip_field_files.settings');
 
     if ($config->get('save')) {
       $save_uri = $config->get('save_uri');
