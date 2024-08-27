@@ -1,7 +1,7 @@
 zip_field_files.settings:
   path: '/admin/config/zip_field_files'
   defaults:
-    _form: '\Drupal\zip_field_files\Form\zip_field_filesSettingsForm'
+    _form: '\Drupal\zip_field_files\Form\ZipfilesSettingsForm'
     _title: 'Zip file fields settings'
   requirements:
     _permission: 'administer site configuration'
@@ -9,6 +9,6 @@ zip_field_files.settings:
 zip_field_files.download:
   path: '/download/zip/{nid}/{field_name}'
   defaults:
-    _controller: \Drupal\zip_field_files\Controller\zip_field_filesController::download
+    _controller: '\Drupal\zip_field_files\Controller\ZipfilesController::download'
   requirements:
     _permission: 'access content'
