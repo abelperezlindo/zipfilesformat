@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations and some functions.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements HOOK_help().
+ */
+function zipfiles_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the block module.
+    case 'help.page.zipfiles':
+      return '<p>' . t('Provides an link for download all files of an field as zip file. In the <a href="@settings">Zip files administration page</a> you can config some options including the file name and its persistence on the file system.', [
+        '@settings' => Url::fromRoute('zipfiles.settings')->toString(),
+      ]) . '</p>';
+
+    // Help for another path in the block module.
+    case 'zipfiles.settings':
+      $helptext[] = '<p>' . t('This page provides a interface for config config some options of zip files module including the file name and its persistence on the file system.') . '</p>';
+      $helptext[] = '<p>' . t('Remember to set the Format Options: Generic ZIP file for the field you want to use.') . '</p>';
+      return implode('', $helptext);
+  }
+}
