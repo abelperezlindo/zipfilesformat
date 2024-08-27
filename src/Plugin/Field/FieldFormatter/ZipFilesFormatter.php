@@ -54,15 +54,18 @@ class ZipFilesFormatter extends GenericFileFormatter {
     $form['only_show_zip_link'] = [
       '#title' => $this->t('Only show the link to the compressed file'),
       '#type' => 'checkbox',
+      '#description' => $this->t('By default, this formatter displays a link to each file and at the end the link to download all of them inside a zip. If you check this option, only the link to download the compressed file will be displayed.'),
       '#default_value' => $this->getSetting('only_show_zip_link'),
     ];
     $form['no_link_when_only_one'] = [
       '#title' => $this->t('Don\'t show when there is only one file'),
+      '#description' => $this->t('If there is only one file in the field, it may not make sense to download it in a zip file.'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('no_link_when_only_one'),
     ];
     $form['link_text_label'] = [
-      '#title' => $this->t('Don\'t show when there is only one file'),
+      '#title' => $this->t('Text for zip link'),
+      '#description' => $this->t('You can add the text you want to display in the download link.'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('link_text_label'),
     ];

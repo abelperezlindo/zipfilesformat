@@ -22,7 +22,7 @@ function zip_field_files_help($route_name, RouteMatchInterface $route_match) {
     // Help for another path in the block module.
     case 'zip_field_files.settings':
       $helptext[] = '<p>' . t('This page provides a interface for config config some options of Zip Field Files module including the file name and its persistence on the file system.') . '</p>';
-      $helptext[] = '<p>' . t('Remember to set the Format Options: Generic ZIP file for the field you want to use.') . '</p>';
+      $helptext[] = '<p>' . t('Remember to set the Format Options: "ZIP file" for the field you want to use.') . '</p>';
       return implode('', $helptext);
   }
 }
