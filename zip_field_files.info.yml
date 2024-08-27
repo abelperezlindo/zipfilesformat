@@ -1,4 +1,4 @@
-name: zip_field_files
+name: Zip Field Files
 description: Provides an link for download all files of an field as zip file.
 package: Field types
 type: module
